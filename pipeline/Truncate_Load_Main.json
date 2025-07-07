@@ -54,12 +54,7 @@
 							"name": "If Condition1",
 							"type": "IfCondition",
 							"dependsOn": [],
-							"userProperties": [
-								{
-									"name": "var_date",
-									"value": "@formatDateTime(substring(split(item().name, '_')[2], 0, 8), 'yyyy-MM-dd')"
-								}
-							],
+							"userProperties": [],
 							"typeProperties": {
 								"expression": {
 									"value": "@startsWith(item().name, 'CUST_MSTR_')",
@@ -114,8 +109,14 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_ADLS_GenericCSV",
-												"type": "DatasetReference"
+												"referenceName": "DelimitedText1",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -196,8 +197,14 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_ADLS_GenericCSV",
-												"type": "DatasetReference"
+												"referenceName": "DelimitedText1",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
@@ -269,8 +276,14 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_ADLS_GenericCSV",
-												"type": "DatasetReference"
+												"referenceName": "DelimitedText1",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
 											}
 										],
 										"outputs": [
