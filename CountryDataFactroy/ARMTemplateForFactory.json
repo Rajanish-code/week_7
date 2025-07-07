@@ -95,12 +95,7 @@
 									"name": "If Condition1",
 									"type": "IfCondition",
 									"dependsOn": [],
-									"userProperties": [
-										{
-											"name": "var_date",
-											"value": "@formatDateTime(substring(split(item().name, '_')[2], 0, 8), 'yyyy-MM-dd')"
-										}
-									],
+									"userProperties": [],
 									"typeProperties": {
 										"expression": {
 											"value": "@startsWith(item().name, 'CUST_MSTR_')",
@@ -155,9 +150,14 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_ADLS_GenericCSV",
+														"referenceName": "DelimitedText1",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"FileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -239,9 +239,14 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_ADLS_GenericCSV",
+														"referenceName": "DelimitedText1",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"FileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -314,9 +319,14 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_ADLS_GenericCSV",
+														"referenceName": "DelimitedText1",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"FileName": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
 													}
 												],
 												"outputs": [
@@ -342,6 +352,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_ADLS_GenericCSV')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/CUST_MSTR')]",
 				"[concat(variables('factoryId'), '/datasets/master_child')]",
 				"[concat(variables('factoryId'), '/datasets/H_ECOM_Orders')]"
@@ -394,10 +405,36 @@
 					"referenceName": "LS_ADLS",
 					"type": "LinkedServiceReference"
 				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS",
+					"type": "LinkedServiceReference"
+				},
 				"parameters": {
-					"fileName": {
-						"type": "string",
-						"defaultValue": "@item().name"
+					"FileName": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -406,7 +443,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": {
-							"value": "@dataset().fileName",
+							"value": "@dataset().FileName",
 							"type": "Expression"
 						},
 						"fileSystem": "raw"
@@ -552,7 +589,15 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [],
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Truncate_Load_Main",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -563,7 +608,9 @@
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Truncate_Load_Main')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/trigger3')]",
